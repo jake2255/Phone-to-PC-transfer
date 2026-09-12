@@ -32,7 +32,7 @@ namespace phone_to_pc_transfer_app.Core
         private void SweepExpired()
         {
             var cutoff = DateTime.UtcNow - _expiry;
-            var staleIds = _devices.Where(kv => kv.Value.lastSeen < cutoff).Select(kv => kv.Key).ToList();
+            var staleIds = _devices.Where(kv => kv.Value.LastSeen < cutoff).Select(kv => kv.Key).ToList();
 
             if (staleIds.Count == 0)
                 return;

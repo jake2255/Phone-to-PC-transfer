@@ -89,7 +89,7 @@ namespace phone_to_pc_transfer_app.Core
                 Platform = payload.Platform,
                 TransferPort = payload.TransferPort,
                 IpAddress = result.RemoteEndPoint.Address.ToString(),
-                lastSeen = DateTime.UtcNow
+                LastSeen = DateTime.UtcNow
             };
 
             DeviceAnnounced?.Invoke(this, device);

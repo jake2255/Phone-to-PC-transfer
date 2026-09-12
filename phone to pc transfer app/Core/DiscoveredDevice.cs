@@ -16,7 +16,7 @@ namespace phone_to_pc_transfer_app.Core
 
         public int TransferPort { get; set; }
 
-        public DateTime lastSeen { get; set; }
+        public DateTime LastSeen { get; set; }
 
         public override string ToString() => $"{Name} ({Platform}) @ {IpAddress}:{TransferPort}";
     }

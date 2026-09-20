@@ -1,50 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
 
 namespace phone_to_pc_transfer_app.Core
 {
-    internal class TransferClient : IDisposable
+    public class TransferClient
     {
-        private readonly HttpClient _httpClient;
-
-        public TransferClient()
-        {
-            _httpClient = new HttpClient
-            {
-                Timeout = Timeout.InfiniteTimeSpan
-            };
-        }
-
         public async Task SendFileAsync(string targetIp, int targetPort, string filePath, CancellationToken cancellationToken = default)
         {
             if (!File.Exists(filePath))
                 throw new FileNotFoundException("File not found.", filePath);
 
             var fileInfo = new FileInfo(filePath);
-            var url = $"http://{targetIp}:{targetPort}/file";
 
             await using var fileStream = File.OpenRead(filePath);
 
-            var content = new StreamContent(fileStream);
-            content.Headers.Add("X-File-Name", fileInfo.Name);
+            using var client = new TcpClient();
+            await client.ConnectAsync(targetIp, targetPort, cancellationToken);
 
-            var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
+            await using var networkStream = client.GetStream();
+
+            await TransferProtocol.WriteHeaderAsync(networkStream, new TransferHeader
+            {
+                Type = TransferProtocol.TypeFile,
+                FileName = fileInfo.Name,
+                PayloadLength = fileInfo.Length
+            }, cancellationToken);
+
+            await fileStream.CopyToAsync(networkStream, cancellationToken);
+            await networkStream.FlushAsync(cancellationToken);
         }
 
         public async Task SendTextAsync(string targetIp, int targetPort, string message, CancellationToken cancellationToken = default)
         {
-            var url = $"http://{targetIp}:{targetPort}/text";
-            var content = new StringContent(message);
+            var payload = Encoding.UTF8.GetBytes(message);
 
-            var response = await _httpClient.PostAsync(url, content, cancellationToken);
-            response.EnsureSuccessStatusCode();
-        }
+            using var client = new TcpClient();
+            await client.ConnectAsync(targetIp, targetPort, cancellationToken);
 
-        public void Dispose()
-        {
-            _httpClient.Dispose();
+            await using var networkStream = client.GetStream();
+
+            await TransferProtocol.WriteHeaderAsync(networkStream, new TransferHeader
+            {
+                Type = TransferProtocol.TypeText,
+                PayloadLength = payload.Length
+            }, cancellationToken);
+
+            await networkStream.WriteAsync(payload, cancellationToken);
+            await networkStream.FlushAsync(cancellationToken);
         }
     }
 }

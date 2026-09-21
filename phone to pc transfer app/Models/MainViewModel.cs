@@ -34,7 +34,7 @@ namespace phone_to_pc_transfer_app.Models
 
         public MainViewModel()
         {
-
+            
         }
 
         public void Initialize()

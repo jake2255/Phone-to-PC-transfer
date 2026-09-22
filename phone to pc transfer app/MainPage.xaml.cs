@@ -1,24 +1,22 @@
-﻿namespace phone_to_pc_transfer_app
+﻿using phone_to_pc_transfer_app.Models;
+
+namespace phone_to_pc_transfer_app
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
+        private readonly MainViewModel _viewModel;
 
-        public MainPage()
+        public MainPage(MainViewModel viewModel)
         {
             InitializeComponent();
+            _viewModel = viewModel;
+            BindingContext = _viewModel;
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            count += 10;
-
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
-
-            SemanticScreenReader.Announce(CounterBtn.Text);
+            base.OnAppearing();
+            _viewModel.Initialize();
         }
     }
 }

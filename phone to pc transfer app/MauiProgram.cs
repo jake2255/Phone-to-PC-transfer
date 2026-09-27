@@ -18,7 +18,8 @@ namespace phone_to_pc_transfer_app
 #if DEBUG
     		builder.Logging.AddDebug();
 #endif
-
+            builder.Services.AddSingleton<phone_to_pc_transfer_app.Models.MainViewModel>();
+            builder.Services.AddSingleton<MainPage>();
             return builder.Build();
         }
     }

@@ -30,7 +30,10 @@ namespace phone_to_pc_transfer_app.Models
         private string statusMessage = "Ready";
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsNotBusy))]
         private bool isBusy;
+
+        public bool IsNotBusy => !IsBusy;
 
         public MainViewModel()
         {

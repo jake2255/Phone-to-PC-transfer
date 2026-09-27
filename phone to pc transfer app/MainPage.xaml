@@ -52,14 +52,14 @@
             <Button Grid.Column="1"
                     Text="Send Text"
                     Command="{Binding SendTextCommand}"
-                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                    IsEnabled="{Binding IsNotBusy}" />
         </Grid>
 
         <!-- File send -->
         <Button Grid.Row="3"
                 Text="Send File..."
                 Command="{Binding SendFileCommand}"
-                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                IsEnabled="{Binding IsNotBusy}" />
 
         <!-- Busy indicator -->
         <ActivityIndicator Grid.Row="4"

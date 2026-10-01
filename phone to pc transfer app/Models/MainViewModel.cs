@@ -61,13 +61,33 @@ namespace phone_to_pc_transfer_app.Models
         private void OnDevicesChanged(object? sender, EventArgs e)
         {
             var current = _registry.GetDevices();
+            var currentIds = current.Select(d => d.DeviceId).ToHashSet();
 
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                Devices.Clear();
+                for (int i = Devices.Count - 1; i >= 0; i--)
+                {
+                    if (!currentIds.Contains(Devices[i].DeviceId))
+                    {
+                        Devices.RemoveAt(i);
+                    }
+                }
+
                 foreach (var device in current)
                 {
-                    Devices.Add(device);
+                    var existing = Devices.FirstOrDefault(d => d.DeviceId == device.DeviceId);
+                    if (existing is null)
+                    {
+                        Devices.Add(device);
+                    }
+                    else
+                    {
+                        existing.Name = device.Name;
+                        existing.Platform = device.Platform;
+                        existing.IpAddress = device.IpAddress;
+                        existing.TransferPort = device.TransferPort;
+                        existing.LastSeen = device.LastSeen;
+                    }
                 }
             });
         }

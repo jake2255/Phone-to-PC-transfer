@@ -96,7 +96,7 @@ namespace phone_to_pc_transfer_app.Models
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                StatusMessage = $"Received '{e.FileName}' from {e.SenderIpAddress}.";
+                StatusMessage = $"Received '{e.FileName}' from {e.SenderIpAddress}. Saved to: {e.SavedPath}";
             });
         }
 

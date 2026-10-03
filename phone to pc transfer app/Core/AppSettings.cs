@@ -33,7 +33,22 @@ namespace phone_to_pc_transfer_app.Core
 
         public static string Platform => DeviceInfo.Platform == DevicePlatform.WinUI ? "Windows" : "Android";
 
-        public static string SaveFolder => Path.Combine(FileSystem.AppDataDirectory, "ReceivedFiles");
+        public static string SaveFolder
+        {
+            get
+            {
+#if WINDOWS
+                var downloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+                return Path.Combine(downloads, "DataTransfer");
+#elif ANDROID
+                var externalDir = Android.App.Application.Context.GetExternalFilesDir(null)?.AbsolutePath ?? FileSystem.AppDataDirectory;
+                return Path.Combine(externalDir, "ReceivedFiles");
+#else
+                return Path.Combine(FileSystem.AppDataDirectory, "ReceivedFiles");
+#endif
+            }
+        
+        }
 
         private static string DefaultDeviceName()
         {

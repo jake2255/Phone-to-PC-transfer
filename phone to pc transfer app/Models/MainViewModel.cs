@@ -30,6 +30,9 @@ namespace phone_to_pc_transfer_app.Models
         private string statusMessage = "Ready";
 
         [ObservableProperty]
+        private string receivedText = string.Empty;
+
+        [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsNotBusy))]
         private bool isBusy;
 
@@ -104,7 +107,8 @@ namespace phone_to_pc_transfer_app.Models
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                StatusMessage = $"Text from {e.SenderIpAddress}: {e.Text}";
+                ReceivedText = e.Text;
+                StatusMessage = $"Text recieved from {e.SenderIpAddress}";
             });
         }
 

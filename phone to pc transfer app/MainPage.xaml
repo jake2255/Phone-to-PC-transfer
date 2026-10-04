@@ -5,9 +5,9 @@
              xmlns:discovery="clr-namespace:phone_to_pc_transfer_app.Core"
              x:Class="phone_to_pc_transfer_app.MainPage"
              x:DataType="vm:MainViewModel"
-             Title="Phone-PC Transfer">
+             Title="Phone-PC Data Transfer">
 
-    <Grid Padding="16" RowDefinitions="Auto,*,Auto,Auto,Auto" RowSpacing="12">
+    <Grid Padding="16" RowDefinitions="Auto,1*,Auto,2*,Auto,Auto,Auto" RowSpacing="12">
 
         <!-- Status line -->
         <Label Grid.Row="0"
@@ -44,8 +44,20 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <!-- Received message header -->
+        <Label Grid.Row="2"
+               Text="Received text:"
+               FontAttributes="Bold"
+               FontSize="14" />
+
+        <Editor Grid.Row="3"
+                Text="{Binding ReceivedText}"
+                IsReadOnly="True"
+                FontSize="20"
+                BackgroundColor="Transparent" />
+
         <!-- Text send -->
-        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto" ColumnSpacing="8">
             <Entry Grid.Column="0"
                    Text="{Binding TextToSend}"
                    Placeholder="Type a message..." />
@@ -56,13 +68,13 @@
         </Grid>
 
         <!-- File send -->
-        <Button Grid.Row="3"
+        <Button Grid.Row="5"
                 Text="Send File..."
                 Command="{Binding SendFileCommand}"
                 IsEnabled="{Binding IsNotBusy}" />
 
         <!-- Busy indicator -->
-        <ActivityIndicator Grid.Row="4"
+        <ActivityIndicator Grid.Row="6"
                             IsRunning="{Binding IsBusy}"
                             IsVisible="{Binding IsBusy}"
                             HorizontalOptions="Center" />

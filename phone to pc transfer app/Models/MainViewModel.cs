@@ -42,7 +42,7 @@ namespace phone_to_pc_transfer_app.Models
             _listener = new DeviceListener(deviceId);
             _registry = new DeviceRegistry(_listener);
             _beacon = new DeviceBeacon(deviceId, AppSettings.DeviceName, AppSettings.Platform, AppSettings.TransferPort);
-            _server = new TransferServer(AppSettings.TransferPort, AppSettings.SaveFolder);
+            _server = new TransferServer(AppSettings.TransferPort);
             _client = new TransferClient();
 
             _registry.DevicesChanged += OnDevicesChanged;
@@ -104,7 +104,7 @@ namespace phone_to_pc_transfer_app.Models
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                StatusMessage = $"Text from {e.SenderIpAddress}: {e.Text}.";
+                StatusMessage = $"Text from {e.SenderIpAddress}: {e.Text}";
             });
         }
 

@@ -9,7 +9,6 @@ namespace phone_to_pc_transfer_app.Core
     public class TransferServer : IDisposable
     {
         private readonly int _port;
-        private readonly string _saveFolder;
         private TcpListener? _listener;
         private CancellationTokenSource? _cts;
         private Task? _acceptLoop;
@@ -20,18 +19,15 @@ namespace phone_to_pc_transfer_app.Core
 
         public event EventHandler<Exception>? TransferFailed;
 
-        public TransferServer(int port, string saveFolder)
+        public TransferServer(int port)
         {
             _port = port;
-            _saveFolder = saveFolder;
         }
 
         public void Start()
         {
             if (_acceptLoop != null)
                 return;
-
-            Directory.CreateDirectory(_saveFolder);
 
             _listener = new TcpListener(IPAddress.Any, _port);
             _listener.Start();
@@ -119,17 +115,12 @@ namespace phone_to_pc_transfer_app.Core
             if (string.IsNullOrWhiteSpace(safeFileName))
                 throw new InvalidDataException("Received file with an invalid name.");
 
-            var destinationPath = Path.Combine(_saveFolder, safeFileName);
-
-            await using (var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true))
-            {
-                await TransferProtocol.CopyExactlyAsync(stream, fileStream, header.PayloadLength, token);
-            }
+            var savedLocation = await ReceivedFileWriter.SaveFileAsync(safeFileName, stream, header.PayloadLength, token);
 
             FileReceived?.Invoke(this, new FileReceivedEventArgs
             {
                 FileName = safeFileName,
-                SavedPath = destinationPath,
+                SavedPath = savedLocation,
                 SizeBytes = header.PayloadLength,
                 SenderIpAddress = senderIp
             });

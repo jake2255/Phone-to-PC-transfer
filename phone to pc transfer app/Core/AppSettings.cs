@@ -40,9 +40,6 @@ namespace phone_to_pc_transfer_app.Core
 #if WINDOWS
                 var downloads = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
                 return Path.Combine(downloads, "DataTransfer");
-#elif ANDROID
-                var externalDir = Android.App.Application.Context.GetExternalFilesDir(null)?.AbsolutePath ?? FileSystem.AppDataDirectory;
-                return Path.Combine(externalDir, "ReceivedFiles");
 #else
                 return Path.Combine(FileSystem.AppDataDirectory, "ReceivedFiles");
 #endif
